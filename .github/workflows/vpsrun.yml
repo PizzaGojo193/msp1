@@ -19,9 +19,7 @@ jobs:
       - name: Install Chocolatey
         run: |
           Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-      - name: Install neofetch (optional)
-        run: |
-          choco install neofetch -y
+
       - name: Download and run sshx
         run: |
           Invoke-WebRequest -Uri "https://github.com/ekzhang/sshx/releases/latest/download/sshx-windows-amd64.exe" -OutFile "sshx.exe"
