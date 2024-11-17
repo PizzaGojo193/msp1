@@ -11,9 +11,38 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      - name: Set up tmate session
-        uses: mxschmitt/action-tmate@v3
+      - name: Set up remote access
+        run: |
+          # Install Chocolatey
+          Set-ExecutionPolicy Bypass -Scope Process -Force
+          [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+          iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+          
+          # Install OpenSSH Server
+          choco install openssh -y
+          Start-Service sshd
+          
+          # Set up a new user
+          $username = "ghactions"
+          $password = -join ((65..90) + (97..122) | Get-Random -Count 12 | % {[char]$_})
+          net user $username $password /add
+          net localgroup administrators $username /add
+          
+          # Get IP address
+          $ip = (Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias Ethernet).IPAddress
+          
+          # Output connection info
+          echo "Remote Access Credentials:" > connection_info.txt
+          echo "IP: $ip" >> connection_info.txt
+          echo "Username: $username" >> connection_info.txt
+          echo "Password: $password" >> connection_info.txt
+          
+      - name: Upload connection info
+        uses: actions/upload-artifact@v2
         with:
-          limit-access-to-actor: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: connection-info
+          path: connection_info.txt
+          
+      - name: Keep alive
+        run: |
+          while ($true) { Start-Sleep -Seconds 60 }
