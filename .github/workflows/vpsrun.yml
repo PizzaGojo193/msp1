@@ -32,16 +32,11 @@ jobs:
           $ip = (Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias Ethernet).IPAddress
           
           # Output connection info
-          echo "Remote Access Credentials:" > connection_info.txt
-          echo "IP: $ip" >> connection_info.txt
-          echo "Username: $username" >> connection_info.txt
-          echo "Password: $password" >> connection_info.txt
-          
-      - name: Upload connection info
-        uses: actions/upload-artifact@v2
-        with:
-          name: connection-info
-          path: connection_info.txt
+          echo "Remote Access Credentials:"
+          echo "IP: $ip"
+          echo "Username: $username"
+          echo "Password: $password"
+          echo "SSH Command: ssh ${username}@${ip}"
           
       - name: Keep alive
         run: |
