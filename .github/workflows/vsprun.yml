@@ -22,4 +22,5 @@ jobs:
 
       - name: Run Chrome Remote Desktop Host
         run: |
-          Start-Process "%PROGRAMFILES(X86)%\Google\Chrome Remote Desktop\CurrentVersion\remoting_start_host.exe" -ArgumentList "--code='4/0AeanS0Y6u0pSusFAaqiR6LKmAc1EOC3lLOnkjojp9lEu5t6CU35eFBoLTT9um_w-Mt67_w' --redirect-url='https://remotedesktop.google.com/_/oauthredirect' --name=%COMPUTERNAME%"
+          $chromeRemoteDesktopPath = [System.Environment]::GetEnvironmentVariable('PROGRAMFILES(X86)', 'Machine') + "\Google\Chrome Remote Desktop\CurrentVersion\remoting_start_host.exe"
+          Start-Process $chromeRemoteDesktopPath -ArgumentList "--code='4/0AeanS0Y6u0pSusFAaqiR6LKmAc1EOC3lLOnkjojp9lEu5t6CU35eFBoLTT9um_w-Mt67_w' --redirect-url='https://remotedesktop.google.com/_/oauthredirect' --name=%COMPUTERNAME%"
