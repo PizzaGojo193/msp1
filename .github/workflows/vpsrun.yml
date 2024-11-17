@@ -7,23 +7,22 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-2022
     steps:
       - uses: actions/checkout@v3
-      - name: Update package list
-        run: sudo apt-get update
       - name: Download Chrome Remote Desktop
-        run: wget https://dl.google.com/linux/direct/chrome-remote-desktop_current_amd64.deb
-      - name: Install Xfce and dependencies
         run: |
-          sudo DEBIAN_FRONTEND=noninteractive \
-          apt install --assume-yes xfce4 desktop-base dbus-x11 xscreensaver
-      - name: Configure Chrome Remote Desktop session
-        run: |
-          sudo bash -c 'echo "exec /etc/X11/Xsession /usr/bin/xfce4-session" > /etc/chrome-remote-desktop-session'
+          Invoke-WebRequest -Uri "https://dl.google.com/chrome-remote-desktop/chromeremotedesktop.msi" -OutFile "chromeremotedesktop.msi"
       - name: Install Chrome Remote Desktop
-        run: sudo apt install ./chrome-remote-desktop_current_amd64.deb
-      - name: Install neofetch
-        run: sudo apt install neofetch -y
-      - name: Run sshx
-        run: curl -sSf https://sshx.io/get | sh -s run
+        run: |
+          Start-Process msiexec.exe -Wait -ArgumentList '/I chromeremotedesktop.msi /qn'
+      - name: Install Chocolatey
+        run: |
+          Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+      - name: Install neofetch (optional)
+        run: |
+          choco install neofetch -y
+      - name: Download and run sshx
+        run: |
+          Invoke-WebRequest -Uri "https://github.com/ekzhang/sshx/releases/latest/download/sshx-windows-amd64.exe" -OutFile "sshx.exe"
+          ./sshx.exe run
