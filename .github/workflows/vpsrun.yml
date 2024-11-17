@@ -10,17 +10,10 @@ jobs:
     runs-on: windows-2022
     steps:
       - uses: actions/checkout@v3
-      - name: Download Chrome Remote Desktop
-        run: |
-          Invoke-WebRequest -Uri "https://dl.google.com/edgedl/chrome-remote-desktop/chromeremotedesktophost.msi" -OutFile "chromeremotedesktop.msi"
-      - name: Install Chrome Remote Desktop
-        run: |
-          Start-Process msiexec.exe -Wait -ArgumentList '/I chromeremotedesktop.msi /qn'
-      - name: Install Chocolatey
-        run: |
-          Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-
-      - name: Download and run sshx
-        run: |
-          Invoke-WebRequest -Uri "https://github.com/ekzhang/sshx/releases/latest/download/sshx-windows-amd64.exe" -OutFile "sshx.exe"
-          ./sshx.exe run
+      
+      - name: Set up tmate session
+        uses: mxschmitt/action-tmate@v3
+        with:
+          limit-access-to-actor: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
